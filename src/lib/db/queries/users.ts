@@ -20,6 +20,9 @@ export async function getUserByName(name: string) {
 }
 
 export async function resetDatabase() {
-    const result = await db.delete(users);
-    return result;
+    return await db.delete(users);
+}
+
+export async function getUsers() {
+    return await db.select({name: users.name}).from(users);
 }
