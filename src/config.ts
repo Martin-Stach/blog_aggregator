@@ -18,6 +18,7 @@ export function getCurrentUser(): string {
   return config.currentUserName;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: JSON.parse is an any :shrug:
 function validateConfig(rawConfig: any) {
   if (!rawConfig.db_url || typeof rawConfig.db_url !== "string") {
     throw new Error("db_url is required in config file");
