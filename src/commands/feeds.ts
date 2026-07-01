@@ -1,4 +1,5 @@
 import { getCurrentUser } from "src/config";
+import { createFeedFollow } from "src/lib/db/queries/feed-follows";
 import { createFeed, getFeeds } from "src/lib/db/queries/feeds";
 import {
   getUserByID as getUserById,
@@ -20,6 +21,7 @@ export async function handleAddfeed(cmdName: string, ...args: string[]) {
   }
 
   const feed: Feed = await createFeed(name, url, currentUser.id);
+  await createFeedFollow(currentUser.id, feed.id);
 
   printFeed(feed, currentUser);
 }
