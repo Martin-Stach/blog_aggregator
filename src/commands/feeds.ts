@@ -1,29 +1,23 @@
-import { getCurrentUser } from "src/config";
 import { createFeedFollow } from "src/lib/db/queries/feed-follows";
 import { createFeed, getFeeds } from "src/lib/db/queries/feeds";
-import {
-  getUserByID as getUserById,
-  getUserByName,
-} from "src/lib/db/queries/users";
+import { getUserByID as getUserById } from "src/lib/db/queries/users";
 import type { Feed, User } from "src/lib/db/schema";
 
-export async function handleAddfeed(cmdName: string, ...args: string[]) {
+export async function handleAddfeed(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
   if (args.length !== 2) {
     throw new Error(`usage: ${cmdName} <name> <url>`);
   }
 
   const [name, url] = args;
 
-  const currentUser = await getUserByName(getCurrentUser());
+  const feed: Feed = await createFeed(name, url, user.id);
+  await createFeedFollow(user.id, feed.id);
 
-  if (!currentUser) {
-    throw new Error("Error fetching User");
-  }
-
-  const feed: Feed = await createFeed(name, url, currentUser.id);
-  await createFeedFollow(currentUser.id, feed.id);
-
-  printFeed(feed, currentUser);
+  printFeed(feed, user);
 }
 
 function printFeed(feed: Feed, user: User) {
